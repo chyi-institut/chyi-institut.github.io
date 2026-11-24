@@ -5,7 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#eaf6ff">
   <meta name="description" content="Чүй облусунун 8 районунун картасы, педагогдор үчүн курстар жана усулдук материалдар.">
+  <meta property="og:url" content="https://chyi-institut.github.io/">
+  <link rel="canonical" href="https://chyi-institut.github.io/">
   <title>Чүй билим берүү институту</title>
+  <script>
+    history.scrollRestoration = 'manual';
+
+    // Clear incoming section fragments before the browser scrolls to them.
+    if (location.hash) {
+      const entryUrl = new URL(location.href);
+      entryUrl.hash = '';
+      history.replaceState(history.state, '', entryUrl.href);
+    }
+
+    window.addEventListener('pageshow', () => {
+      requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
+    });
+  </script>
   <link rel="icon" href="mark.svg?v=82e9e2c6" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css?v=ba6a8e41">
   <script src="district-map.js" defer></script>
