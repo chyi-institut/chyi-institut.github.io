@@ -20,13 +20,17 @@ const russian = {
   heroCourses: 'Посмотреть курсы',
   schedule: 'План-график',
   carouselLabel: 'Слайдер фотографий',
-  slideWorkshop: 'Профессиональное развитие учителей',
-  slideWorkshopAlt: 'Учителя за столом обсуждают учебные материалы',
-  slideLibrary: 'Подготовка к урокам',
-  slideLibraryAlt: 'Два учителя рассматривают учебник в библиотеке',
-  slideValley: 'Чуйская долина',
-  slideValleyAlt: 'Зелёные поля Чуйской долины и горы Ала-Тоо вдали',
-  slideNote: 'Иллюстрации',
+  slideHistory: 'Зарина Абдрахманова · Лучший учитель истории',
+  slideHistoryAlt: 'Учитель года – 2026. Лучший учитель истории Зарина Жаныбековна Абдрахманова из Сокулукского района.',
+  slideWorkersDay: 'День работников образования',
+  slideWorkersDayAlt: 'Групповое фото на праздновании Дня работников образования в Бишкеке 5 октября 2026 года.',
+  slideCeremony: 'Фото с торжественной церемонии в Бишкеке',
+  slideCeremonyAlt: 'Трое учителей у сцены на праздновании Дня работников образования в Бишкеке.',
+  slidePhysics: 'Азамат Джаманкулов · Лучший учитель физики и астрономии',
+  slidePhysicsAlt: 'Учитель года – 2026. Лучший учитель физики и астрономии Азамат Атагельдиевич Джаманкулов из Московского района.',
+  slideArt: 'Алтынай Көчөрбаева · Лучший учитель изобразительного искусства',
+  slideArtAlt: 'Учитель года – 2026. Лучший учитель изобразительного искусства Алтынай Тариеловна Көчөрбаева из Кеминского района.',
+  viewFullPhoto: 'Открыть в полном размере',
   slidePrevious: 'Предыдущее фото',
   slideNext: 'Следующее фото',
   mapTitle: 'Карта Чуйской области',
@@ -71,6 +75,9 @@ const russian = {
   excursionTitle: 'Школьники из Кара-Балты посетили Жогорку Кенеш',
   excursionBody: 'Ученики 9–11 классов школы №8 познакомились с работой парламента во время экскурсии.',
   schoolKaraBalta: 'Школа №8 Кара-Балты',
+  awardsDate: '5 октября 2026',
+  awardsTitle: 'Учителя Чуйской области победили в конкурсе «Учитель года – 2026»',
+  awardsBody: 'Педагоги Сокулукского, Московского и Кеминского районов одержали победу в трёх номинациях.',
   newsDate: '14 августа 2026',
   newsTitle: 'Реорганизация областных институтов образования',
   newsBody: 'Министерство просвещения сообщило о преобразовании методических центров Чуйской и других областей в институты образования.',
@@ -149,7 +156,7 @@ const searchSections = [
   { key: 'regional', href: '#schedule', details: ['schedule', 'regionalBody'] },
   { key: 'onlineTitle', href: '#online', details: ['onlineCourses', 'onlineBody'] },
   { key: 'resourceTitle', href: '#materials', details: ['materials', 'resourceLead'] },
-  { key: 'news', href: '#news', details: ['trainingTitle', 'excursionTitle', 'newsTitle'] },
+  { key: 'news', href: '#news', details: ['trainingTitle', 'excursionTitle', 'awardsTitle', 'newsTitle'] },
   { key: 'updates', href: '#updates', details: ['announcementTitle'] },
   { key: 'about', href: '#about', details: ['brandName', 'aboutBody'] },
   { key: 'contact', href: '#contact', details: ['contactSource', 'contactLead'] },
@@ -162,6 +169,7 @@ const linkDetails = {
   announcementTitle: ['announcementBody'],
   trainingTitle: ['trainingBody', 'schoolAlekseevka'],
   excursionTitle: ['excursionBody', 'schoolKaraBalta'],
+  awardsTitle: ['awardsBody'],
   newsTitle: ['newsBody'],
 };
 const searchLinks = [...document.querySelectorAll('[data-search]')]
@@ -339,12 +347,15 @@ for (const control of [districtMap, districtOptions]) {
 const carousel = document.querySelector('.photo-carousel');
 const slides = [...carousel.querySelectorAll('.carousel-slide')];
 const slidePosition = carousel.querySelector('.carousel-position');
+const fullPhotoLink = carousel.querySelector('.carousel-full');
 let activeSlide = 0;
 
 function moveSlide(offset) {
   slides[activeSlide].hidden = true;
   activeSlide = (activeSlide + offset + slides.length) % slides.length;
-  slides[activeSlide].hidden = false;
+  const nextSlide = slides[activeSlide];
+  nextSlide.hidden = false;
+  fullPhotoLink.href = nextSlide.querySelector('img').src;
   slidePosition.textContent = `${activeSlide + 1} / ${slides.length}`;
 }
 
