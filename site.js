@@ -34,6 +34,7 @@ const russian = {
   slidePrevious: 'Предыдущее фото',
   slideNext: 'Следующее фото',
   mapTitle: 'Карта Чуйской области',
+  mapAccessible: 'Карта Чуйской области с отметкой города Бишкек',
   mapHelp: 'Чтобы увидеть школы, выберите район на карте или в списке.',
   mapNoScript: 'Для просмотра карты включите JavaScript в браузере.',
   mapCredit: 'Границы · OCHA, 2018',
@@ -271,6 +272,17 @@ function buildDistrictMap() {
     districtElements.set(district.id, { shape, label, button });
   }
   districtMap.append(svgElement('path', { class: 'map-city', d: districtMapGeometry.tokmok, 'fill-rule': 'evenodd' }), ...labels);
+
+  // Bishkek's civic center: 42°52′ N, 74°34′ E (Bishkek Voluntary Local Review).
+  const capital = svgElement('g', { class: 'map-capital', transform: 'translate(333.4 129.7)' });
+  const capitalName = svgElement('text', { y: -47 });
+  capitalName.textContent = 'Бишкек';
+  capital.append(
+    svgElement('path', { d: 'M0 0C-4-5-14-15-14-24a14 14 0 1 1 28 0C14-15 4-5 0 0Z' }),
+    svgElement('circle', { cy: -24, r: 5 }),
+    capitalName,
+  );
+  districtMap.append(capital);
 }
 
 function updateDistrictMap() {
