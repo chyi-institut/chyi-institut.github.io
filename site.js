@@ -19,6 +19,16 @@ const russian = {
   heroLead: 'Курсы повышения квалификации, методические материалы и новости образования для педагогов Чуйской области.',
   heroCourses: 'Посмотреть курсы',
   schedule: 'План-график',
+  carouselLabel: 'Слайдер фотографий',
+  slideWorkshop: 'Профессиональное развитие учителей',
+  slideWorkshopAlt: 'Учителя за столом обсуждают учебные материалы',
+  slideLibrary: 'Подготовка к урокам',
+  slideLibraryAlt: 'Два учителя рассматривают учебник в библиотеке',
+  slideValley: 'Чуйская долина',
+  slideValleyAlt: 'Зелёные поля Чуйской долины и горы Ала-Тоо вдали',
+  slideNote: 'Иллюстрации',
+  slidePrevious: 'Предыдущее фото',
+  slideNext: 'Следующее фото',
   mapTitle: 'Карта Чуйской области',
   mapHelp: 'Выберите район на карте или в списке.',
   mapNoScript: 'Для просмотра карты включите JavaScript в браузере.',
@@ -49,12 +59,18 @@ const russian = {
   textbooksBody: 'Цифровая библиотека по школьным предметам',
   twelve: '12-летнее образование',
   twelveBody: 'Программы перехода и руководства для учителей',
-  updatesTitle: 'Новости и объявления',
-  updateTabs: 'Тип публикаций',
   news: 'Новости',
   scheduleDate: '20 ноября 2026',
   announcementTitle: 'План-график Чуйской области на 2026–2027 год',
   announcementBody: 'Расписание повышения квалификации педагогов опубликовано в разделе документов Республиканского института.',
+  trainingDate: '16 ноября 2026',
+  trainingTitle: 'В Алексеевской школе прошёл тренинг для учителей',
+  trainingBody: '11 ноября школа провела для педагогов тренинг «Каждый ученик — отдельный мир».',
+  schoolAlekseevka: 'Алексеевская школа',
+  excursionDate: '11 ноября 2026',
+  excursionTitle: 'Школьники из Кара-Балты посетили Жогорку Кенеш',
+  excursionBody: 'Ученики 9–11 классов школы №8 познакомились с работой парламента во время экскурсии.',
+  schoolKaraBalta: 'Школа №8 Кара-Балты',
   newsDate: '14 августа 2026',
   newsTitle: 'Реорганизация областных институтов образования',
   newsBody: 'Министерство просвещения сообщило о преобразовании методических центров Чуйской и других областей в институты образования.',
@@ -75,6 +91,7 @@ const russian = {
 
 const translatedAttributes = {
   label: 'aria-label',
+  alt: 'alt',
   placeholder: 'placeholder',
 };
 const kyrgyz = {
@@ -132,7 +149,8 @@ const searchSections = [
   { key: 'regional', href: '#schedule', details: ['schedule', 'regionalBody'] },
   { key: 'onlineTitle', href: '#online', details: ['onlineCourses', 'onlineBody'] },
   { key: 'resourceTitle', href: '#materials', details: ['materials', 'resourceLead'] },
-  { key: 'updatesTitle', href: '#updates', details: ['updates', 'news'] },
+  { key: 'news', href: '#news', details: ['trainingTitle', 'excursionTitle', 'newsTitle'] },
+  { key: 'updates', href: '#updates', details: ['announcementTitle'] },
   { key: 'about', href: '#about', details: ['brandName', 'aboutBody'] },
   { key: 'contact', href: '#contact', details: ['contactSource', 'contactLead'] },
 ];
@@ -142,6 +160,8 @@ const linkDetails = {
   textbooks: ['textbooksBody'],
   twelve: ['twelveBody'],
   announcementTitle: ['announcementBody'],
+  trainingTitle: ['trainingBody', 'schoolAlekseevka'],
+  excursionTitle: ['excursionBody', 'schoolKaraBalta'],
   newsTitle: ['newsBody'],
 };
 const searchLinks = [...document.querySelectorAll('[data-search]')]
@@ -316,30 +336,23 @@ for (const control of [districtMap, districtOptions]) {
   });
 }
 
-const tabs = [...document.querySelectorAll('[role="tab"]')];
-function selectTab(activeTab) {
-  for (const tab of tabs) {
-    const selected = tab === activeTab;
-    tab.setAttribute('aria-selected', String(selected));
-    tab.tabIndex = selected ? 0 : -1;
-    document.getElementById(tab.getAttribute('aria-controls')).hidden = !selected;
-  }
+const carousel = document.querySelector('.photo-carousel');
+const slides = [...carousel.querySelectorAll('.carousel-slide')];
+const slidePosition = carousel.querySelector('.carousel-position');
+let activeSlide = 0;
+
+function moveSlide(offset) {
+  slides[activeSlide].hidden = true;
+  activeSlide = (activeSlide + offset + slides.length) % slides.length;
+  slides[activeSlide].hidden = false;
+  slidePosition.textContent = `${activeSlide + 1} / ${slides.length}`;
 }
 
-for (const tab of tabs) {
-  tab.addEventListener('click', () => selectTab(tab));
-  tab.addEventListener('keydown', (event) => {
-    const lastIndex = tabs.length - 1;
-    const currentIndex = tabs.indexOf(tab);
-    const nextIndex = {
-      ArrowLeft: (currentIndex + lastIndex) % tabs.length,
-      ArrowRight: (currentIndex + 1) % tabs.length,
-      Home: 0,
-      End: lastIndex,
-    }[event.key];
-    if (nextIndex === undefined) return;
-    event.preventDefault();
-    selectTab(tabs[nextIndex]);
-    tabs[nextIndex].focus();
-  });
-}
+carousel.querySelector('.carousel-prev').addEventListener('click', () => moveSlide(-1));
+carousel.querySelector('.carousel-next').addEventListener('click', () => moveSlide(1));
+carousel.addEventListener('keydown', (event) => {
+  const offset = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
+  if (!offset) return;
+  event.preventDefault();
+  moveSlide(offset);
+});
