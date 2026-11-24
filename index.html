@@ -28,7 +28,8 @@
 
   <a class="skip" href="#main" data-t="skip">Негизги мазмунга өтүү</a>
   <div class="utility" id="top">
-    <div class="wrap utility-inner">
+    <!-- The previously shared carousel fragment now opens at the page start. -->
+    <div class="wrap utility-inner" id="carousel-photos">
       <span><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span data-t="location">Чүй облусу, Кыргызстан</span></span>
       <a href="https://edu.gov.kg/" data-t="ministry">КР Агартуу министрлиги</a>
     </div>
@@ -72,7 +73,7 @@
             </div>
           </div>
           <section class="photo-carousel" aria-label="Сүрөт слайдери" data-label="carouselLabel">
-            <div class="carousel-viewport" id="carousel-photos">
+            <div class="carousel-viewport" id="carousel-slides">
               <figure class="carousel-slide">
                 <img src="2026-best-history-teacher.jpg" width="1280" height="1280" alt="Жылдын мыкты мугалими – 2026. Сокулук районунан мыкты тарых мугалими Зарина Жаныбековна Абдрахманова." data-alt="slideHistoryAlt" fetchpriority="high">
                 <figcaption data-t="slideHistory">Зарина Абдрахманова · Мыкты тарых мугалими</figcaption>
@@ -97,9 +98,9 @@
             <div class="carousel-footer">
               <a class="carousel-full text-link" href="2026-best-history-teacher.jpg" target="_blank" rel="noopener" data-t="viewFullPhoto">Толук өлчөмдө көрүү</a>
               <div class="carousel-controls">
-                <button class="icon-button carousel-prev" type="button" aria-controls="carousel-photos" aria-label="Мурунку сүрөт" data-label="slidePrevious"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+                <button class="icon-button carousel-prev" type="button" aria-controls="carousel-slides" aria-label="Мурунку сүрөт" data-label="slidePrevious"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
                 <span class="carousel-position" aria-live="polite" aria-atomic="true">1 / 5</span>
-                <button class="icon-button carousel-next" type="button" aria-controls="carousel-photos" aria-label="Кийинки сүрөт" data-label="slideNext"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+                <button class="icon-button carousel-next" type="button" aria-controls="carousel-slides" aria-label="Кийинки сүрөт" data-label="slideNext"><svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg></button>
               </div>
             </div>
           </section>
