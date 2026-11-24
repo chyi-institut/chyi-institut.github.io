@@ -34,12 +34,27 @@ const russian = {
   slidePrevious: 'Предыдущее фото',
   slideNext: 'Следующее фото',
   mapTitle: 'Карта Чуйской области',
-  mapHelp: 'Выберите район на карте или в списке.',
+  mapHelp: 'Чтобы увидеть школы, выберите район на карте или в списке.',
   mapNoScript: 'Для просмотра карты включите JavaScript в браузере.',
   mapCredit: 'Границы · OCHA, 2018',
   districtList: 'Районы',
   districtCenter: 'Центр района',
   districtSchools: 'Школьный портал Чуйской области',
+  schoolDirectory: 'Список школ',
+  schoolDistrict: 'Район',
+  schoolSearch: 'Поиск школы',
+  schoolSearchPlaceholder: 'Название или адрес школы',
+  schoolAddress: 'Адрес',
+  schoolPhone: 'Телефон',
+  schoolEmail: 'Электронная почта',
+  schoolMissing: 'Нет данных',
+  schoolEmpty: 'По запросу ничего не найдено.',
+  schoolUnavailable: 'Список школ не загрузился. Сведения доступны в источниках ниже.',
+  schoolCount: 'Всего школ',
+  schoolFound: 'Найдено школ',
+  schoolEmis: 'Открытые данные ИСУО',
+  schoolRecord: 'Карточка в ИСУО',
+  schoolContactSource: 'Источник контактов',
   quick: 'Полезные ссылки',
   quickSchedule: 'Курсы в Чуйской области',
   onlineCourses: 'Онлайн-курсы',
@@ -105,6 +120,16 @@ const kyrgyz = {
   menuClose: 'Менюну жабуу',
   searchEmpty: 'Издөө боюнча эч нерсе табылган жок.',
   searchOptions: 'Көп колдонулган бөлүмдөр',
+  schoolAddress: 'Дареги',
+  schoolPhone: 'Телефону',
+  schoolEmail: 'Электрондук почтасы',
+  schoolMissing: 'Маалымат жок',
+  schoolEmpty: 'Издөө боюнча мектеп табылган жок.',
+  schoolUnavailable: 'Мектептердин тизмеси жүктөлгөн жок. Маалыматты төмөндөгү булактардан көрүүгө болот.',
+  schoolCount: 'Мектептердин саны',
+  schoolFound: 'Табылган мектептер',
+  schoolRecord: 'ИСУОдогу маалымат',
+  schoolContactSource: 'Байланыштардын булагы',
 };
 const translations = { ky: kyrgyz, ru: russian };
 const textNodes = [...document.querySelectorAll('[data-t]')];
@@ -122,6 +147,12 @@ const districtMap = document.querySelector('#district-map');
 const districtOptions = document.querySelector('#district-options');
 const districtName = document.querySelector('#district-name');
 const districtCenter = document.querySelector('#district-center');
+const schoolDialog = document.querySelector('#school-dialog');
+const schoolDistrict = document.querySelector('#school-district');
+const schoolSearch = document.querySelector('#school-search');
+const schoolStatus = document.querySelector('#school-status');
+const schoolList = document.querySelector('#school-list');
+const schoolResults = schoolDialog.querySelector('.school-results');
 
 const districts = [
   { id: 'panfilov', label: 'Панфилов', ky: 'Панфилов району', ru: 'Панфиловский район', center: { ky: 'Кайыңды шаары', ru: 'город Каинды' }, point: [105, 315], color: '#a5cdef' },
@@ -135,6 +166,7 @@ const districts = [
 ];
 const districtElements = new Map();
 let selectedDistrict = 'chui';
+let schoolDialogOpener;
 
 for (const element of textNodes) {
   kyrgyz[element.dataset.t] = element.innerHTML.trim().replaceAll('<br>', '\n');
@@ -208,6 +240,9 @@ function applyLanguage(nextLanguage) {
   }
   updateMenu(nav.dataset.open === 'true');
   updateDistrictMap();
+  schoolDistrict.replaceChildren(...districts.map((district) => new Option(district[language], district.id)));
+  schoolDistrict.value = selectedDistrict;
+  if (schoolDialog.open) renderSchools();
   if (dialog.open) renderSearch();
 }
 
@@ -223,6 +258,8 @@ function buildDistrictMap() {
     const button = document.createElement('button');
     button.type = 'button';
     button.dataset.district = district.id;
+    button.setAttribute('aria-haspopup', 'dialog');
+    button.setAttribute('aria-controls', 'school-dialog');
     districtOptions.append(button);
 
     const shape = svgElement('path', { class: 'map-shape', d: districtMapGeometry[district.id], 'fill-rule': 'evenodd', 'data-district': district.id });
@@ -257,11 +294,93 @@ function updateDistrictMap() {
 
 function selectDistrict(id) {
   selectedDistrict = id;
+  schoolDistrict.value = id;
   updateDistrictMap();
 }
 
 function normalize(text) {
   return text.toLowerCase().trim().replaceAll('ё', 'е');
+}
+
+function schoolContact(label, values, scheme = '') {
+  const row = document.createElement('div');
+  const term = document.createElement('dt');
+  const description = document.createElement('dd');
+  term.textContent = label;
+
+  if (values.length === 0) {
+    description.className = 'school-missing';
+    description.textContent = translations[language].schoolMissing;
+  }
+  for (const [index, value] of values.entries()) {
+    if (index > 0) description.append(', ');
+    if (scheme === 'mailto' || (scheme === 'tel' && value.startsWith('+'))) {
+      const link = document.createElement('a');
+      link.className = 'text-link';
+      link.href = `${scheme}:${value}`;
+      link.textContent = value;
+      description.append(link);
+    } else {
+      description.append(value);
+    }
+  }
+  row.append(term, description);
+  return row;
+}
+
+function schoolCard(school, strings) {
+  const item = document.createElement('li');
+  const title = document.createElement('h3');
+  const contacts = document.createElement('dl');
+  const sources = document.createElement('div');
+  title.textContent = school.name;
+  contacts.append(
+    schoolContact(strings.schoolAddress, school.address ? [school.address] : []),
+    schoolContact(strings.schoolPhone, school.phones ?? [], 'tel'),
+    schoolContact(strings.schoolEmail, school.emails ?? [], 'mailto'),
+  );
+  sources.className = 'school-card-sources';
+  for (const [url, label] of [[school.source, strings.schoolRecord], [school.contactSource, strings.schoolContactSource]]) {
+    if (!url) continue;
+    const link = document.createElement('a');
+    link.className = 'text-link';
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = label;
+    sources.append(link);
+  }
+  item.append(title, contacts, sources);
+  return item;
+}
+
+function renderSchools() {
+  const strings = translations[language];
+  const schools = typeof districtSchoolRecords === 'undefined' ? null : districtSchoolRecords[selectedDistrict];
+  if (!schools) {
+    schoolStatus.textContent = strings.schoolUnavailable;
+    schoolList.replaceChildren();
+    return;
+  }
+
+  const normalizeSchool = (value) => normalize(value.replace(/[№#]\s*/g, ' '));
+  const terms = normalizeSchool(schoolSearch.value).split(/\s+/).filter(Boolean);
+  const searching = terms.length > 0;
+  const matches = searching ? schools.filter((school) => {
+    const searchable = normalizeSchool(`${school.name} ${school.address ?? ''}`);
+    return terms.every((word) => searchable.includes(word));
+  }) : schools;
+  const countLabel = searching ? strings.schoolFound : strings.schoolCount;
+  schoolStatus.textContent = matches.length ? `${countLabel} · ${matches.length}` : strings.schoolEmpty;
+  schoolList.replaceChildren(...matches.map((school) => schoolCard(school, strings)));
+  schoolResults.scrollTop = 0;
+}
+
+function openSchools(opener) {
+  schoolDialogOpener = opener;
+  schoolSearch.value = '';
+  renderSchools();
+  schoolDialog.showModal();
 }
 
 function renderSearch() {
@@ -340,9 +459,27 @@ searchResults.addEventListener('click', (event) => {
 for (const control of [districtMap, districtOptions]) {
   control.addEventListener('click', (event) => {
     const district = event.target.closest('[data-district]');
-    if (district) selectDistrict(district.dataset.district);
+    if (!district) return;
+    const id = district.dataset.district;
+    selectDistrict(id);
+    openSchools(districtElements.get(id).button);
   });
 }
+
+for (const opener of document.querySelectorAll('[data-open-schools]')) {
+  opener.addEventListener('click', (event) => {
+    event.preventDefault();
+    openSchools(nav.contains(opener) && menuButton.offsetWidth ? menuButton : opener);
+  });
+}
+schoolDistrict.addEventListener('change', () => {
+  selectDistrict(schoolDistrict.value);
+  schoolSearch.value = '';
+  renderSchools();
+});
+schoolSearch.addEventListener('input', renderSchools);
+schoolDialog.querySelector('.school-close').addEventListener('click', () => schoolDialog.close());
+schoolDialog.addEventListener('close', () => schoolDialogOpener?.focus({ preventScroll: true }));
 
 const carousel = document.querySelector('.photo-carousel');
 const slides = [...carousel.querySelectorAll('.carousel-slide')];
