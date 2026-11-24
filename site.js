@@ -2,8 +2,8 @@ const russian = {
   skip: 'Перейти к основному содержанию',
   location: 'Чуйская область, Кыргызстан',
   ministry: 'Министерство просвещения КР',
-  brandName: 'chyi билим берүү институту',
-  brand: 'chyi билим берүү\nинституту',
+  brandName: 'Чүй билим берүү институту',
+  brand: 'Чүй билим берүү\nинституту',
   mainNav: 'Главное меню',
   courses: 'Обучение',
   materials: 'Материалы',
@@ -15,7 +15,7 @@ const russian = {
   menuOpen: 'Открыть меню',
   menuClose: 'Закрыть меню',
   heroLabel: 'Для педагогов',
-  heroTitle: 'chyi билим берүү институту',
+  heroTitle: 'Чүй билим берүү институту',
   heroLead: 'Курсы повышения квалификации, методические материалы и новости образования для педагогов Чуйской области.',
   heroCourses: 'Посмотреть курсы',
   schedule: 'План-график',
@@ -64,7 +64,7 @@ const russian = {
   forTeachers: 'Педагогам',
   contactLead: 'Прямые контакты института уточняются.',
   contactSource: 'Контакты Министерства просвещения',
-  footerName: '© 2026 chyi билим берүү институту',
+  footerName: '© 2026 Чүй билим берүү институту',
   backTop: 'К началу страницы',
   close: 'Закрыть',
   searchInput: 'Ключевое слово',
@@ -100,14 +100,14 @@ const districtName = document.querySelector('#district-name');
 const districtCenter = document.querySelector('#district-center');
 
 const districts = [
-  { id: 'panfilov', label: 'Панфилов', ky: 'Панфилов району', ru: 'Панфиловский район', center: { ky: 'Кайыңды шаары', ru: 'город Каинды' }, point: [105, 315], color: '#b9d1a1' },
-  { id: 'jaiyl', label: 'Жайыл', ky: 'Жайыл району', ru: 'Жайылский район', center: { ky: 'Кара-Балта шаары', ru: 'город Кара-Балта' }, point: [226, 360], color: '#a7c290' },
-  { id: 'moscow', label: 'Москва', ky: 'Москва району', ru: 'Московский район', center: { ky: 'Беловодское айылы', ru: 'село Беловодское' }, point: [224, 98], color: '#d5ddab' },
-  { id: 'sokuluk', label: 'Сокулук', ky: 'Сокулук району', ru: 'Сокулукский район', center: { ky: 'Сокулук айылы', ru: 'село Сокулук' }, point: [279, 139], color: '#adc897' },
-  { id: 'alamudun', label: 'Аламүдүн', ruLabel: 'Аламудун', ky: 'Аламүдүн району', ru: 'Аламудунский район', center: { ky: 'Лебединовка айылы', ru: 'село Лебединовка' }, point: [335, 196], color: '#cad7a5' },
-  { id: 'ysyk-ata', label: 'Ысык-Ата', ky: 'Ысык-Ата району', ru: 'Ысык-Атинский район', center: { ky: 'Кант шаары', ru: 'город Кант' }, point: [407, 167], color: '#a7c99a' },
-  { id: 'chui', label: 'Чүй', ruLabel: 'Чуй', ky: 'Чүй району', ru: 'Чуйский район', center: { ky: 'Токмок шаары', ru: 'город Токмок' }, point: [488, 206], color: '#bcd2a6' },
-  { id: 'kemin', label: 'Кемин', ky: 'Кемин району', ru: 'Кеминский район', center: { ky: 'Кемин шаары', ru: 'город Кемин' }, point: [665, 161], color: '#98bb89' },
+  { id: 'panfilov', label: 'Панфилов', ky: 'Панфилов району', ru: 'Панфиловский район', center: { ky: 'Кайыңды шаары', ru: 'город Каинды' }, point: [105, 315], color: '#a5cdef' },
+  { id: 'jaiyl', label: 'Жайыл', ky: 'Жайыл району', ru: 'Жайылский район', center: { ky: 'Кара-Балта шаары', ru: 'город Кара-Балта' }, point: [226, 360], color: '#82b5e2' },
+  { id: 'moscow', label: 'Москва', ky: 'Москва району', ru: 'Московский район', center: { ky: 'Беловодское айылы', ru: 'село Беловодское' }, point: [224, 98], color: '#b7d6f0' },
+  { id: 'sokuluk', label: 'Сокулук', ky: 'Сокулук району', ru: 'Сокулукский район', center: { ky: 'Сокулук айылы', ru: 'село Сокулук' }, point: [279, 139], color: '#96bce7' },
+  { id: 'alamudun', label: 'Аламүдүн', ruLabel: 'Аламудун', ky: 'Аламүдүн району', ru: 'Аламудунский район', center: { ky: 'Лебединовка айылы', ru: 'село Лебединовка' }, point: [335, 196], color: '#a8d3f0' },
+  { id: 'ysyk-ata', label: 'Ысык-Ата', ky: 'Ысык-Ата району', ru: 'Ысык-Атинский район', center: { ky: 'Кант шаары', ru: 'город Кант' }, point: [407, 167], color: '#86b6de' },
+  { id: 'chui', label: 'Чүй', ruLabel: 'Чуй', ky: 'Чүй району', ru: 'Чуйский район', center: { ky: 'Токмок шаары', ru: 'город Токмок' }, point: [488, 206], color: '#b5d8f5' },
+  { id: 'kemin', label: 'Кемин', ky: 'Кемин району', ru: 'Кеминский район', center: { ky: 'Кемин шаары', ru: 'город Кемин' }, point: [665, 161], color: '#8abce8' },
 ];
 const districtElements = new Map();
 let selectedDistrict = 'chui';
@@ -215,6 +215,7 @@ function updateDistrictMap() {
     const shortName = language === 'ru' ? (district.ruLabel ?? district.label) : district.label;
     shape.classList.toggle('is-selected', selected);
     shape.setAttribute('aria-label', district[language]);
+    label.classList.toggle('is-selected', selected);
     label.textContent = shortName;
     button.textContent = shortName;
     button.setAttribute('aria-label', district[language]);
