@@ -23,10 +23,10 @@
     });
   </script>
   <link rel="icon" href="institute-logo.jpg?v=067db548" type="image/jpeg">
-  <link rel="stylesheet" href="styles.css?v=f082e537">
+  <link rel="stylesheet" href="styles.css?v=9c5e1c60">
   <script src="district-map.js" defer></script>
   <script src="district-schools.js?v=d34a3875" defer></script>
-  <script src="site.js?v=69923e88" defer></script>
+  <script src="site.js?v=df0b1215" defer></script>
 </head>
 <body>
   <svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -47,7 +47,7 @@
   <div class="utility" id="top">
     <!-- The previously shared carousel fragment now opens at the page start. -->
     <div class="wrap utility-inner" id="carousel-photos">
-      <span><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span data-t="location">Чүй облусу, Кыргызстан</span></span>
+      <a class="location-link" href="#address"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span data-t="address">Дарек</span></a>
       <a href="https://edu.gov.kg/" data-t="ministry">КР Агартуу министрлиги</a>
     </div>
   </div>
@@ -130,7 +130,7 @@
               <p data-t="mapHelp">Мектептердин тизмесин көрүү үчүн картадан же тизмеден районду тандаңыз.</p>
             </figcaption>
             <div class="map-canvas">
-              <svg class="district-map" id="district-map" viewBox="0 0 900 430" role="img" aria-label="Бишкек шаары белгиленген Чүй облусунун картасы" data-label="mapAccessible"></svg>
+              <svg class="district-map" id="district-map" viewBox="0 0 900 430" role="group" aria-label="Бишкек шаары белгиленген Чүй облусунун картасы" data-label="mapAccessible"></svg>
               <noscript><p data-t="mapNoScript">Картаны көрүү үчүн браузерде JavaScript'ти күйгүзүңүз.</p></noscript>
             </div>
             <a class="map-credit" href="https://data.humdata.org/dataset/cod-ab-kgz" data-t="mapCredit">Чек аралар · OCHA, 2018</a>
@@ -277,6 +277,21 @@
         </div>
       </div>
     </section>
+
+    <section class="section address-section" id="address" aria-labelledby="address-title" tabindex="-1">
+      <div class="wrap address-grid">
+        <div class="section-head">
+          <h2 id="address-title" data-t="address">Дарек</h2>
+          <p class="street-address" data-t="streetAddress">г. Бишкек, Широкая 1Б</p>
+          <p data-t="routeHelp">Геолокацияга уруксат берсеңиз, маршрут турган жериңизден түзүлөт.</p>
+          <div class="route-actions">
+            <a class="button primary" href="https://www.google.com/maps/dir/?api=1&amp;destination=42.919741%2C74.616399" target="_blank" rel="noopener" data-t="googleRoute">Google Карталарда маршрут</a>
+            <a class="button secondary" href="https://2gis.kg/bishkek/directions/points/%7C74.616399%2C42.919741%3B15763234351117933" target="_blank" rel="noopener" data-t="twoGisRoute">2ГИСте маршрут</a>
+          </div>
+        </div>
+        <iframe class="address-map" src="https://www.google.com/maps?q=42.919741%2C74.616399&amp;z=17&amp;output=embed" title="Широкая 1Б дарегинин картасы" data-title="addressMapTitle" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      </div>
+    </section>
   </main>
 
   <footer id="contact" class="footer">
@@ -284,7 +299,7 @@
       <div class="footer-grid">
         <div>
           <a class="brand" href="#top" data-label="brandName" aria-label="Чүй билим берүү институту"><img src="institute-logo.jpg?v=067db548" width="47" height="47" alt=""><span data-t="brand">Чүй билим берүү<br>институту</span></a>
-          <p class="footer-location"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span data-t="location">Чүй облусу, Кыргызстан</span></p>
+          <a class="footer-location location-link" href="#address"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span data-t="streetAddress">г. Бишкек, Широкая 1Б</span></a>
         </div>
         <div>
           <h2 data-t="forTeachers">Педагогдорго</h2>
@@ -294,7 +309,6 @@
         </div>
         <div>
           <h2 data-t="contact">Байланыш</h2>
-          <p data-t="contactLead">Институттун түз байланыш маалыматы такталууда.</p>
           <a href="https://edu.gov.kg/contacts/" data-source="contact" data-search="contactSource" data-t="contactSource">Агартуу министрлигинин байланыштары</a>
           <a href="https://www.instagram.com/chui_obbi/">Instagram · @chui_obbi</a>
         </div>

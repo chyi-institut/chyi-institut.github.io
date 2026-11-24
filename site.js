@@ -1,6 +1,5 @@
 const russian = {
   skip: 'Перейти к основному содержанию',
-  location: 'Чуйская область, Кыргызстан',
   ministry: 'Министерство просвещения КР',
   brandName: 'Чүй билим берүү институту',
   brand: 'Чүй билим берүү\nинституту',
@@ -101,7 +100,12 @@ const russian = {
   aboutBody: 'Работа института направлена на профессиональное развитие и методическую поддержку педагогов Чуйской области. На портале собраны план-график курсов Чуйской области и открытые ресурсы для учителей.',
   aboutSource: 'Информация Министерства просвещения',
   forTeachers: 'Педагогам',
-  contactLead: 'Прямые контакты института уточняются.',
+  address: 'Адрес',
+  streetAddress: 'г. Бишкек, Широкая 1Б',
+  routeHelp: 'Разрешите доступ к геопозиции, чтобы построить маршрут от вашего местоположения.',
+  googleRoute: 'Маршрут в Google Картах',
+  twoGisRoute: 'Маршрут в 2ГИС',
+  addressMapTitle: 'Карта района по адресу Широкая 1Б',
   contactSource: 'Контакты Министерства просвещения',
   footerName: '© 2026 Чүй билим берүү институту',
   backTop: 'К началу страницы',
@@ -116,6 +120,7 @@ const translatedAttributes = {
   label: 'aria-label',
   alt: 'alt',
   placeholder: 'placeholder',
+  title: 'title',
 };
 const kyrgyz = {
   menuClose: 'Менюну жабуу',
@@ -192,7 +197,8 @@ const searchSections = [
   { key: 'news', href: '#news', details: ['trainingTitle', 'excursionTitle', 'awardsTitle', 'newsTitle'] },
   { key: 'updates', href: '#updates', details: ['announcementTitle'] },
   { key: 'about', href: '#about', details: ['brandName', 'aboutBody'] },
-  { key: 'contact', href: '#contact', details: ['contactSource', 'contactLead'] },
+  { key: 'address', href: '#address', details: ['streetAddress', 'googleRoute', 'twoGisRoute'] },
+  { key: 'contact', href: '#contact', details: ['contactSource'] },
 ];
 const linkDetails = {
   certificate: ['quickCertificate'],
@@ -255,6 +261,7 @@ function svgElement(tag, attributes) {
 
 function buildDistrictMap() {
   const labels = [];
+  const districtsLayer = svgElement('g', { 'aria-hidden': 'true' });
   for (const district of districts) {
     const button = document.createElement('button');
     button.type = 'button';
@@ -267,14 +274,14 @@ function buildDistrictMap() {
     shape.style.setProperty('--district-fill', district.color);
     const [x, y] = district.point;
     const label = svgElement('text', { class: 'map-label', x, y, 'data-district': district.id });
-    districtMap.append(shape);
+    districtsLayer.append(shape);
     labels.push(label);
     districtElements.set(district.id, { shape, label, button });
   }
-  districtMap.append(svgElement('path', { class: 'map-city', d: districtMapGeometry.tokmok, 'fill-rule': 'evenodd' }), ...labels);
+  districtsLayer.append(svgElement('path', { class: 'map-city', d: districtMapGeometry.tokmok, 'fill-rule': 'evenodd' }), ...labels);
 
   // Bishkek's civic center: 42°52′ N, 74°34′ E (Bishkek Voluntary Local Review).
-  const capital = svgElement('g', { class: 'map-capital', transform: 'translate(333.4 129.7)' });
+  const capital = svgElement('a', { class: 'map-capital', href: '#address', transform: 'translate(333.4 129.7)' });
   const capitalName = svgElement('text', { y: -47 });
   capitalName.textContent = 'Бишкек';
   capital.append(
@@ -282,7 +289,7 @@ function buildDistrictMap() {
     svgElement('circle', { cy: -24, r: 5 }),
     capitalName,
   );
-  districtMap.append(capital);
+  districtMap.append(districtsLayer, capital);
 }
 
 function updateDistrictMap() {
