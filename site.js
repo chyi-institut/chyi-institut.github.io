@@ -352,9 +352,11 @@ function schoolCard(school, strings) {
   const title = document.createElement('h3');
   const contacts = document.createElement('dl');
   const sources = document.createElement('div');
-  title.textContent = school.name;
+  const showKyrgyz = language === 'ky';
+  const address = showKyrgyz ? (school.addressKy ?? school.address) : school.address;
+  title.textContent = showKyrgyz ? (school.nameKy ?? school.name) : school.name;
   contacts.append(
-    schoolContact(strings.schoolAddress, school.address ? [school.address] : []),
+    schoolContact(strings.schoolAddress, address ? [address] : []),
     schoolContact(strings.schoolPhone, school.phones ?? [], 'tel'),
     schoolContact(strings.schoolEmail, school.emails ?? [], 'mailto'),
   );
@@ -386,7 +388,7 @@ function renderSchools() {
   const terms = normalizeSchool(schoolSearch.value).split(/\s+/).filter(Boolean);
   const searching = terms.length > 0;
   const matches = searching ? schools.filter((school) => {
-    const searchable = normalizeSchool(`${school.name} ${school.address ?? ''}`);
+    const searchable = normalizeSchool([school.name, school.nameKy, school.address, school.addressKy].join(' '));
     return terms.every((word) => searchable.includes(word));
   }) : schools;
   const countLabel = searching ? strings.schoolFound : strings.schoolCount;
