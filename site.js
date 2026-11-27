@@ -60,7 +60,7 @@ const russian = {
   trainingTab: 'Мониторинг',
   trainingLink: 'Рейтинг и мониторинг',
   trainingYear: '2026–2027 учебный год',
-  trainingTitle: 'Районный рейтинг и мониторинг повышения квалификации учителей',
+  trainingOverviewTitle: 'Районный рейтинг и мониторинг повышения квалификации учителей',
   trainingDetailTitle: 'Мониторинг по предметам',
   trainingRankHelp: 'Рейтинг составляется по подтверждённому числу учителей, завершивших обучение.',
   trainingRankPending: 'Для рейтинга нужны подтверждённые итоги всех районов. Знак «—» означает, что данных нет.',
@@ -222,7 +222,7 @@ const languageLinks = [...document.querySelectorAll('[data-source]')]
   .filter((element) => Object.hasOwn(sourcePaths, element.dataset.source));
 const searchSections = [
   { key: 'mapTitle', href: '#districts', details: ['districtList', 'mapHelp'] },
-  { key: 'trainingTitle', href: '#training-monitoring', details: ['trainingLink', 'trainingSubject', 'trainingCompleted'] },
+  { key: 'trainingOverviewTitle', href: '#training-monitoring', details: ['trainingLink', 'trainingSubject', 'trainingCompleted'] },
   { key: 'courseTitle', href: '#courses', details: ['courses', 'courseLead'] },
   { key: 'regional', href: '#schedule', details: ['schedule', 'regionalBody'] },
   { key: 'onlineTitle', href: '#online', details: ['onlineCourses', 'onlineBody'] },
