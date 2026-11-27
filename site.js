@@ -34,7 +34,7 @@ const russian = {
   slideNext: 'Следующее фото',
   mapTitle: 'Карта Чуйской области',
   mapAccessible: 'Карта Чуйской области с отметкой города Бишкек',
-  mapHelp: 'Чтобы увидеть школы, выберите район на карте или в списке.',
+  mapHelp: 'Выберите район, чтобы открыть мониторинг по предметам и список школ.',
   mapNoScript: 'Для просмотра карты включите JavaScript в браузере.',
   mapCredit: 'Границы · OCHA, 2018',
   districtList: 'Районы',
@@ -55,6 +55,23 @@ const russian = {
   schoolEmis: 'Открытые данные ИСУО',
   schoolRecord: 'Карточка в ИСУО',
   schoolContactSource: 'Источник контактов',
+  districtDialogViews: 'Информация о районе',
+  schoolsTab: 'Школы',
+  trainingTab: 'Мониторинг',
+  trainingLink: 'Рейтинг и мониторинг',
+  trainingYear: '2026–2027 учебный год',
+  trainingTitle: 'Районный рейтинг и мониторинг повышения квалификации учителей',
+  trainingDetailTitle: 'Мониторинг по предметам',
+  trainingRankHelp: 'Рейтинг составляется по подтверждённому числу учителей, завершивших обучение.',
+  trainingRankPending: 'Для рейтинга нужны подтверждённые итоги всех районов. Знак «—» означает, что данных нет.',
+  trainingSubjectPending: 'Знак «—» означает, что подтверждённых данных о завершивших обучение нет.',
+  trainingPlanned: 'Мест по плану',
+  trainingCompleted: 'Завершили обучение',
+  trainingRank: 'Место в рейтинге',
+  trainingPlanScope: 'Места рассчитаны сложением строк по курсам. Чуйский район и город Токмок указаны в плане вместе. Сумма по курсам для этой группы — 318 мест, в итоговой строке плана указано 297.',
+  trainingChuiNote: 'Места в плане указаны вместе для Чуйского района и города Токмока.',
+  trainingSource: 'Официальный план-график',
+  trainingSubject: 'Предметы и направления',
   quick: 'Полезные ссылки',
   quickSchedule: 'Курсы в Чуйской области',
   onlineCourses: 'Онлайн-курсы',
@@ -124,6 +141,7 @@ const translatedAttributes = {
 };
 const kyrgyz = {
   menuClose: 'Менюну жабуу',
+  trainingDetailTitle: 'Предметтер боюнча мониторинг',
   searchEmpty: 'Издөө боюнча эч нерсе табылган жок.',
   searchOptions: 'Көп колдонулган бөлүмдөр',
   schoolAddress: 'Дареги',
@@ -159,6 +177,19 @@ const schoolSearch = document.querySelector('#school-search');
 const schoolStatus = document.querySelector('#school-status');
 const schoolList = document.querySelector('#school-list');
 const schoolResults = schoolDialog.querySelector('.school-results');
+const schoolTitle = document.querySelector('#school-title');
+const schoolSearchFilter = document.querySelector('#school-search-filter');
+const schoolDirectoryView = document.querySelector('#school-directory-view');
+const trainingDetailView = document.querySelector('#training-detail-view');
+const districtViewButtons = [...schoolDialog.querySelectorAll('[data-district-view]')];
+const trainingDistricts = document.querySelector('#training-districts');
+const trainingSubjects = document.querySelector('#training-subjects');
+const trainingRankingStatus = document.querySelector('#training-ranking-status');
+const trainingSubjectStatus = document.querySelector('#training-subject-status');
+const trainingChuiNote = document.querySelector('#training-chui-note');
+const trainingPlan = typeof districtTraining === 'undefined'
+  ? { districtOrder: [], subjects: [], completedByDistrict: {} }
+  : districtTraining;
 
 const districts = [
   { id: 'panfilov', label: 'Панфилов', ky: 'Панфилов району', ru: 'Панфиловский район', center: { ky: 'Кайыңды шаары', ru: 'город Каинды' }, point: [105, 315], color: '#a5cdef' },
@@ -173,6 +204,7 @@ const districts = [
 const districtElements = new Map();
 let selectedDistrict = 'chui';
 let schoolDialogOpener;
+let districtView = 'schools';
 
 for (const element of textNodes) {
   kyrgyz[element.dataset.t] = element.innerHTML.trim().replaceAll('<br>', '\n');
@@ -190,6 +222,7 @@ const languageLinks = [...document.querySelectorAll('[data-source]')]
   .filter((element) => Object.hasOwn(sourcePaths, element.dataset.source));
 const searchSections = [
   { key: 'mapTitle', href: '#districts', details: ['districtList', 'mapHelp'] },
+  { key: 'trainingTitle', href: '#training-monitoring', details: ['trainingLink', 'trainingSubject', 'trainingCompleted'] },
   { key: 'courseTitle', href: '#courses', details: ['courses', 'courseLead'] },
   { key: 'regional', href: '#schedule', details: ['schedule', 'regionalBody'] },
   { key: 'onlineTitle', href: '#online', details: ['onlineCourses', 'onlineBody'] },
@@ -249,7 +282,8 @@ function applyLanguage(nextLanguage) {
   updateDistrictMap();
   schoolDistrict.replaceChildren(...districts.map((district) => new Option(district[language], district.id)));
   schoolDistrict.value = selectedDistrict;
-  if (schoolDialog.open) renderSchools();
+  renderTrainingOverview();
+  if (schoolDialog.open) renderDistrictDialog();
   if (dialog.open) renderSearch();
 }
 
@@ -397,10 +431,76 @@ function renderSchools() {
   schoolResults.scrollTop = 0;
 }
 
-function openSchools(opener) {
+function trainingRow(label, ...numbers) {
+  const row = document.createElement('tr');
+  const heading = document.createElement('th');
+  heading.scope = 'row';
+  heading.append(label);
+  row.append(heading);
+  for (const number of numbers) {
+    const cell = row.insertCell();
+    cell.textContent = number ?? '—';
+    if (number == null) cell.className = 'training-missing';
+  }
+  return row;
+}
+
+function renderTrainingOverview() {
+  const rows = districts.map((district) => {
+    const index = trainingPlan.districtOrder.indexOf(district.id);
+    return {
+      district,
+      planned: index < 0 ? null : trainingPlan.subjects.reduce((total, subject) => total + subject.planned[index], 0),
+      completed: trainingPlan.completedByDistrict[district.id]?.total,
+    };
+  });
+  const hasRanking = rows.every(({ completed }) => Number.isInteger(completed) && completed >= 0);
+  if (hasRanking) rows.sort((first, second) => second.completed - first.completed);
+  trainingRankingStatus.hidden = hasRanking;
+  trainingDistricts.replaceChildren(...rows.map(({ district, planned, completed }) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'text-link training-district-button';
+    button.dataset.district = district.id;
+    button.setAttribute('aria-haspopup', 'dialog');
+    button.setAttribute('aria-controls', 'school-dialog');
+    button.textContent = district[language];
+    const rank = hasRanking ? 1 + rows.findIndex((row) => row.completed === completed) : null;
+    return trainingRow(button, planned, completed, rank);
+  }));
+}
+
+function renderTrainingDetail() {
+  const index = trainingPlan.districtOrder.indexOf(selectedDistrict);
+  const completed = trainingPlan.completedByDistrict[selectedDistrict]?.subjects;
+  trainingChuiNote.hidden = selectedDistrict !== 'chui';
+  trainingSubjectStatus.hidden = trainingPlan.subjects.length > 0 && trainingPlan.subjects.every(({ id }) => completed?.[id] != null);
+  trainingSubjects.replaceChildren(...trainingPlan.subjects.map((subject) =>
+    trainingRow(subject[language], subject.planned[index], completed?.[subject.id]),
+  ));
+}
+
+function renderDistrictDialog() {
+  const schools = districtView === 'schools';
+  const strings = translations[language];
+  schoolTitle.textContent = schools ? strings.schoolDirectory : strings.trainingDetailTitle;
+  schoolSearchFilter.hidden = !schools;
+  schoolStatus.hidden = !schools;
+  schoolDirectoryView.hidden = !schools;
+  trainingDetailView.hidden = schools;
+  for (const button of districtViewButtons) {
+    button.setAttribute('aria-pressed', String(button.dataset.districtView === districtView));
+  }
+  if (schools) renderSchools();
+  else renderTrainingDetail();
+  schoolResults.scrollTop = 0;
+}
+
+function openDistrictDialog(opener, view) {
   schoolDialogOpener = opener;
   schoolSearch.value = '';
-  renderSchools();
+  districtView = view;
+  renderDistrictDialog();
   schoolDialog.showModal();
 }
 
@@ -477,26 +577,34 @@ searchResults.addEventListener('click', (event) => {
   dialog.close();
 });
 
-for (const control of [districtMap, districtOptions]) {
+for (const control of [districtMap, districtOptions, trainingDistricts]) {
   control.addEventListener('click', (event) => {
     const district = event.target.closest('[data-district]');
     if (!district) return;
     const id = district.dataset.district;
     selectDistrict(id);
-    openSchools(districtElements.get(id).button);
+    const opener = control === districtMap ? districtElements.get(id).button : district;
+    openDistrictDialog(opener, 'training');
   });
 }
 
 for (const opener of document.querySelectorAll('[data-open-schools]')) {
   opener.addEventListener('click', (event) => {
     event.preventDefault();
-    openSchools(nav.contains(opener) && menuButton.offsetWidth ? menuButton : opener);
+    openDistrictDialog(nav.contains(opener) && menuButton.offsetWidth ? menuButton : opener, 'schools');
+  });
+}
+for (const button of districtViewButtons) {
+  button.addEventListener('click', () => {
+    if (districtView === button.dataset.districtView) return;
+    districtView = button.dataset.districtView;
+    renderDistrictDialog();
   });
 }
 schoolDistrict.addEventListener('change', () => {
   selectDistrict(schoolDistrict.value);
   schoolSearch.value = '';
-  renderSchools();
+  renderDistrictDialog();
 });
 schoolSearch.addEventListener('input', renderSchools);
 schoolDialog.querySelector('.school-close').addEventListener('click', () => schoolDialog.close());

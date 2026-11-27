@@ -120,6 +120,22 @@ img { display: block; max-width: 100%; }
 .district-detail p { color: var(--body); font-size: .875rem; }
 .district-detail strong { display: block; color: var(--ink); font-size: 1rem; }
 .district-panel > .button { width: 100%; }
+.district-monitor-link { align-self: center; text-align: center; font-size: .9rem; }
+
+.training-overview { padding-top: clamp(2rem, 4vw, 3.5rem); }
+.training-notice { margin-block: 1rem .75rem; padding: .65rem .85rem; border-left: 3px solid var(--line-strong); border-radius: .3rem; background: var(--tint); color: var(--body); font-size: .95rem; }
+.training-table-wrap { margin-top: .75rem; border: 1px solid var(--line); border-radius: .75rem; overflow: hidden; background: var(--white); }
+.training-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: .95rem; }
+.training-table :is(th, td) { padding: .6rem .7rem; line-height: 1.35; overflow-wrap: anywhere; }
+.training-table thead { background: var(--surface); }
+.training-table thead th { font-weight: 700; }
+.training-table tbody tr { border-top: 1px solid var(--line); }
+.training-table th:first-child { width: 40%; text-align: left; }
+.training-table tbody th { color: var(--ink); font-weight: 620; }
+.training-table td { text-align: center; font-variant-numeric: tabular-nums; }
+.training-table .training-missing { color: var(--muted); }
+.training-district-button { display: block; min-height: 2rem; max-width: 100%; border: 0; background: transparent; padding: 0; text-align: left; line-height: inherit; overflow-wrap: inherit; }
+.training-footnote { margin-top: .65rem; color: var(--muted); font-size: .875rem; }
 
 .shortcuts { padding-block: 2.05rem 2.7rem; }
 .shortcuts h2 { font-size: 1.36rem; line-height: 1.25; font-weight: 760; margin-bottom: 1rem; letter-spacing: -.025em; }
@@ -215,6 +231,10 @@ img { display: block; max-width: 100%; }
 body:has(#school-dialog[open]) { overflow: hidden; }
 .school-controls { padding: 1rem 1.25rem .8rem; border-bottom: 1px solid var(--line); }
 .school-close { flex-shrink: 0; }
+.district-dialog-views { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .65rem; }
+.district-dialog-views button { min-height: 2.35rem; padding: .28rem .85rem; border: 1px solid var(--line-strong); border-radius: .45rem; background: var(--white); font-weight: 650; }
+.district-dialog-views button:hover { background: var(--tint); }
+.district-dialog-views button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent); color: var(--white); }
 .school-filters { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1fr); gap: .65rem 1rem; margin-top: .85rem; }
 .school-filters label { min-width: 0; display: grid; gap: .25rem; font-weight: 650; font-size: .9rem; }
 .school-filters :is(input, select) { min-width: 0; width: 100%; min-height: 2.75rem; padding: .42rem .6rem; background: var(--white); color: var(--ink); border: 1px solid var(--line-strong); border-radius: .5rem; font: inherit; font-weight: 400; font-size: 1rem; }
@@ -229,6 +249,9 @@ body:has(#school-dialog[open]) { overflow: hidden; }
 .school-list .school-missing { color: var(--muted); }
 .school-card-sources, .school-sources { display: flex; flex-wrap: wrap; gap: .35rem .95rem; font-size: .875rem; }
 .school-list:not(:empty) + .school-sources { margin-top: 1rem; }
+.training-detail-year { color: var(--accent); font-weight: 700; }
+.training-detail-year + .training-notice { margin-top: .55rem; }
+.training-detail-year ~ .training-table-wrap th:first-child { width: 55%; }
 
 @media (max-width: 70rem) {
   .wrap { width: min(calc(100% - 3.5rem), var(--wrap)); }
@@ -284,6 +307,10 @@ body:has(#school-dialog[open]) { overflow: hidden; }
   .languages button { padding: .32rem .3rem; }
   .district-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .district-figure figcaption { padding: .8rem .85rem .35rem; }
+  .training-table { font-size: .8125rem; }
+  .training-table :is(th, td) { padding: .5rem .3rem; }
+  .training-table th:first-child { width: 35%; }
+  .training-detail-year ~ .training-table-wrap th:first-child { width: 46%; }
   .course-grid { grid-template-columns: 1fr; }
   .quick-grid { gap: .55rem; }
   .quick-card { flex-direction: column; align-items: flex-start; padding: .85rem .72rem; }
